@@ -1,0 +1,12 @@
+{
+    "name": "todolist",
+    "version": "1.0.0",
+    "scripts": {
+        "dev:client": "cd client && yarn start",
+        "dev:server": "cd server && yarn start",
+        "dev": "concurrently --names \"CLIENT,SERVER\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn run dev:client\" \"yarn run dev:server\""
+    },
+    "devDependencies": {
+        "concurrently": "^4.1.0"
+    }
+}
