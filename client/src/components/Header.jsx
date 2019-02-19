@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom'
 
 import Search from './Search'
@@ -12,7 +12,7 @@ const Header = ({
 
     const [searchStatus, setSearchStatus] = useState(false)
 
-    const loginButton = (
+    const LoginButton = () => (
         <li>
             <Link to="/login">
                 <i className="material-icons">vpn_key</i>
@@ -20,11 +20,11 @@ const Header = ({
         </li>
     );
 
-    const logoutButton = (
+    const LogoutButton = () => (
         <li>
-            <a onClick={onLogout}>
+            <span onClick={onLogout}>
                 <i className="material-icons">lock_open</i>
-            </a>
+            </span>
         </li>
     );
 
@@ -34,18 +34,19 @@ const Header = ({
                 <Link to="/" className="brand-logo center">MEMOPAD</Link>
 
                 <ul>
-                    <li><a onClick={() => setSearchStatus(!searchStatus)}><i className="material-icons">search</i></a></li>
+                    <li><span onClick={() => setSearchStatus(true)}><i className="material-icons">search</i></span></li>
                 </ul>
 
                 <div className="right">
                     <ul>
-                        {isLoggedIn ? logoutButton : loginButton}
+                        {isLoggedIn ? <LogoutButton /> : <LoginButton />}
                     </ul>
                 </div>
             </div>
-            {searchStatus ? <Search onClose={() => setSearchStatus(!searchStatus)}
-                onSearch={onSearch}
-                usernames={usernames} /> : undefined}
+            {searchStatus &&
+                <Search onClose={() => setSearchStatus(false)}
+                    onSearch={onSearch}
+                    usernames={usernames} />}
         </nav>
     )
 }

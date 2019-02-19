@@ -1,4 +1,5 @@
 const express = require('express')
+const jwt = require('jsonwebtoken')
 
 const router = express.Router()
 
@@ -87,27 +88,50 @@ router.post('/signin', (req, res) => {
             })
         }
 
-        req.session.loginInfo = {
+        // req.session.loginInfo = {
+        //     _id: account._id,
+        //     username: account.username
+        // }
+
+        const token = jwt.sign({
             _id: account._id,
             username: account.username
-        }
+        }, 'hello', {
+                expiresIn: "1m"
+            })
 
         return res.json({
-            success: true
+            success: true,
+            token
         })
     })
 })
 
-router.get('/info', (req, res) => {
-    if (typeof req.session.loginInfo === 'undefined') {
+router.post('/info', (req, res) => {
+    const { token } = req.body
+    try {
+        const userInfo = jwt.verify(token, 'hello')
+        console.log(userInfo)
+        if (userInfo.username === 'undefined' || userInfo._id === 'undefined') {
+            return res.status(401).json({
+                error: "not authentication",
+                code: 1
+            })
+        }
+        return res.json({
+            success: true,
+            username: userInfo.username
+        })
+    } catch (err) {
+        if (err instanceof jwt.TokenExpiredError) {
+            console.log('token is expired')
+        }
         return res.status(401).json({
             error: "not authentication",
             code: 1
         })
     }
-    res.json({
-        success: true
-    })
+
 })
 
 router.post('/logout', (req, res) => {

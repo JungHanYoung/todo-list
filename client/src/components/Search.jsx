@@ -28,11 +28,7 @@ const Search = ({ onClose, onSearch, usernames }) => {
 
     function handleChange(e) {
         setKeyword(e.target.value)
-        handleSearch(e.target.value)
-    }
-
-    function handleSearch(keyword) {
-
+        onSearch(e.target.value)
     }
 
     function handleKeyDown(e) {
@@ -52,8 +48,8 @@ const Search = ({ onClose, onSearch, usernames }) => {
             <div className="search-screen white-text">
                 <div className="right">
 
-                    <a className="waves-effect waves-light btn red lighten-1"
-                        onClick={handleClose}>CLOSE</a>
+                    <span className="waves-effect waves-light btn red lighten-1"
+                        onClick={handleClose}>CLOSE</span>
                 </div>
                 <div className="container">
                     <input placeholder="Search a user"

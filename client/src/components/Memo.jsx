@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 // Sub Component
 import DropDownMenu from './memo/DropDownMenu'
 
-const Memo = ({ data, ownership = true }) => {
+const Memo = ({ data, ownership = false }) => {
     let starStyle = { color: '#FF9980' }
     //(this.props.data.starred.indexOf(this.props.currentUser) > -1)
     // true ?  : {};
@@ -30,7 +30,7 @@ const Memo = ({ data, ownership = true }) => {
                             onChange={(e) => setValue(e.target.value)}></textarea>
                     </div>
                     <div className="card-action">
-                        <a onClick={() => toggleEdit(value)}>OK</a>
+                        <span onClick={() => toggleEdit(value)}>OK</span>
                     </div>
                 </div>
             </div>

@@ -1,17 +1,16 @@
 import React from 'react'
+import Dropdown from 'react-materialize/lib/Dropdown'
+import NavItem from 'react-materialize/lib/NavItem'
 
 const DropDownMenu = ({ _id, setEditMode }) => (
     <div className="option-button">
-        <a className="dropdown-button"
-            id={`dropdown-button-${_id}`}
-            data-activates={`dropdown-${_id}`}>
+        <Dropdown trigger={<span className="dropdown-button">
             <i className="material-icons icon-button">more_vert</i>
-        </a>
-        <ul id={`dropdown-${_id}`} className="dropdown-content">
-            <li><a onClick={setEditMode}>Edit</a></li>
-            {/* <li><a onClick={this.handleRemove}>Remove</a></li> */}
-        </ul>
+        </span>}>
+            <NavItem onClick={setEditMode}>Edit</NavItem>
+        </Dropdown>
     </div>
+
 )
 
 export default DropDownMenu

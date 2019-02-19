@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
+import { inject, observer } from 'mobx-react';
 
+
+@inject('account')
+@observer
 class Register extends Component {
     state = {
         username: '',
@@ -14,6 +18,10 @@ class Register extends Component {
     }
 
     render() {
+
+        const { register } = this.props.account
+        const { username, password } = this.state
+
         return (
             <div className="container auth">
                 <Link className="logo" to="/">MEMOPAD</Link>
@@ -48,8 +56,8 @@ class Register extends Component {
                                     onKeyPress={this.handleKeypress}
                                 />
                             </div>
-                            <a className="waves-effect waves-light btn"
-                                onClick={this.handleRegister}>CREATE</a>
+                            <span className="waves-effect waves-light btn"
+                                onClick={() => register(username, password)}>CREATE</span>
                         </div>
                     </div>
                 </div>

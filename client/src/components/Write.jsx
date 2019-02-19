@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 
-const Write = ({ onPost = () => Promise.resolve() }) => {
+
+const Write = ({ onPost = () => Promise.resolve(), error }) => {
 
     const [contents, setContents] = useState('')
 
     function handlePost() {
-        console.log(contents)
-        onPost(contents).then(() => setContents(''))
+        onPost(contents).then(() => {
+            // console.log('handle post')
+            setContents('')
+        })
     }
 
     return (
@@ -18,9 +21,11 @@ const Write = ({ onPost = () => Promise.resolve() }) => {
                         placeholder="Write down your memo"
                         value={contents}
                         onChange={(e) => setContents(e.target.value)}></textarea>
+                    {error && <span class="helper-text" data-error="wrong" data-success="right">메모 저장 실패</span>}
+
                 </div>
                 <div className="card-action">
-                    <a onClick={handlePost}>POST</a>
+                    <span onClick={handlePost}>POST</span>
                 </div>
             </div>
         </div>

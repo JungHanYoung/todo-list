@@ -1,28 +1,48 @@
 const express = require('express')
 const mongoose = require('mongoose')
+const jwt = require('jsonwebtoken')
 const Memo = require('../models/memo')
 
 const router = express.Router()
 
 router.post('/', (req, res) => {
 
-    // check login
-    if (typeof req.session.loginInfo !== 'undefined') {
+    // console.log(req.session)
+    // console.log(req.cookies)
+    // console.log(req.session.loginInfo)
+    // console.log(req)
+    // console.log(req.body.token)
+    // check token
+    const token = req.body.token
+
+    let validToken = null;
+
+    try {
+        validToken = jwt.verify(token, 'hello')
+        console.log(validToken)
+    } catch (err) {
+        if (err instanceof jwt.TokenExpiredError) {
+            console.log('로그인 토큰이 만료')
+            return res.json(403, '로그인 토큰이 만료되었습니다.')
+        }
+    }
+
+    if (typeof validToken._id === 'undefined' || typeof validToken.username === 'undefined') {
         return res.status(403).json({
-            error: "NOT LOGGED IN",
-            code: 1
+            error: "검증된 데이터가 아닙니다.",
+            code: 2
         })
     }
 
     if (typeof req.body.contents && req.body.contents === "") {
         return res.status(400).json({
             error: "메모 내용이 없습니다.",
-            code: 2
+            code: 3
         })
     }
 
     const newMemo = new Memo({
-        writer: req.session.loginInfo.username,
+        writer: validToken.username,
         contents: req.body.contents
     })
 
@@ -35,6 +55,10 @@ router.post('/', (req, res) => {
 })
 
 router.get('/', (req, res) => {
+    // res.status(404).json({
+    //     error: "BROKEN",
+    //     code: 1
+    // })
     Memo.find()
         .sort({ "_id": -1 })
         .limit(6)
