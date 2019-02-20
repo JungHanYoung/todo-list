@@ -8,6 +8,17 @@ const app = express()
 
 const port = process.env.PORT || 4000
 
+const io = require('socket.io').listen(app.listen(port, () => console.log(`server is running on ${port}`)));
+
+io.sockets.on('connection', (socket) => {
+    console.log('client user connected')
+})
+
+app.use((req, res, next) => {
+    req.io = io
+    next()
+})
+
 const dbusername = process.env.DB_USERNAME || "8735132"
 const dbpassword = process.env.DB_PASSWORD || "nej5968"
 
@@ -33,5 +44,3 @@ app.use(express.json())
 const api = require('./routes')
 
 app.use('/api', api)
-
-app.listen(port, () => console.log(`server is running on ${port}`))

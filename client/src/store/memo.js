@@ -89,6 +89,11 @@ class MemoStore {
             })
     }
 
+    @action
+    socketConnectedNewMemo(memo) {
+        this.memos.unshift(memo)
+    }
+
     @action.bound
     setInitial() {
         this.isInitial = true

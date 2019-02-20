@@ -97,7 +97,7 @@ router.post('/signin', (req, res) => {
             _id: account._id,
             username: account.username
         }, 'hello', {
-                expiresIn: "1m"
+                expiresIn: "1h"
             })
 
         return res.json({

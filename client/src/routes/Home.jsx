@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { observer, inject } from 'mobx-react'
+import io from 'socket.io-client'
 
 // components
 import Header from '../components/Header'
@@ -22,35 +23,47 @@ class Home extends React.Component {
 
     componentDidMount() {
 
-        const loadMemoLoop = () => {
-            this.props.memo.loadNewMemo().then(() => {
-                if (this.memoLoaderTimeoutId) {
-                    clearInterval(this.memoLoaderTimeoutId)
-                }
-                this.memoLoaderTimeoutId = setInterval(loadMemoLoop, 5000);
-            })
-        }
+        const socket = io('http://localhost:4000')
 
-        const loadUntilScrollable = () => {
-            const scrollHeight = document.body.scrollHeight// window.$('body').height()
-            const windowHeight = window.innerHeight // window.$('window').height()
-            console.log(scrollHeight, windowHeight)
-            if (document.body.scrollHeight < window.innerHeight) {
-                this.props.memo.loadOldMemo()
-            }
-            // if (window.$("body").height() < window.$(window).height()) {
-            //     this.props.memo.loadOldMemo().then(() => {
+        socket.on('init', (hello) => {
+            console.log('client socket connected', hello)
+        })
 
-            //         if (!this.props.isLast) {
-            //             loadUntilScrollable()
-            //         }
-            //     })
-            // }
-        }
+        socket.on('created', (memo) => {
+            console.log('hello world')
+            console.log(memo)
+            this.props.memo.socketConnectedNewMemo(memo)
+        })
+
+        // const loadMemoLoop = () => {
+        //     this.props.memo.loadNewMemo().then(() => {
+        //         if (this.memoLoaderTimeoutId) {
+        //             clearInterval(this.memoLoaderTimeoutId)
+        //         }
+        //         this.memoLoaderTimeoutId = setInterval(loadMemoLoop, 5000);
+        //     })
+        // }
+
+        // const loadUntilScrollable = () => {
+        //     const scrollHeight = document.body.scrollHeight// window.$('body').height()
+        //     const windowHeight = window.innerHeight // window.$('window').height()
+        //     console.log(scrollHeight, windowHeight)
+        //     if (document.body.scrollHeight < window.innerHeight) {
+        //         this.props.memo.loadOldMemo()
+        //     }
+        //     // if (window.$("body").height() < window.$(window).height()) {
+        //     //     this.props.memo.loadOldMemo().then(() => {
+
+        //     //         if (!this.props.isLast) {
+        //     //             loadUntilScrollable()
+        //     //         }
+        //     //     })
+        //     // }
+        // }
 
         this.props.memo.loadNewMemo().then(() => {
-            setTimeout(loadUntilScrollable, 1000)
-            loadMemoLoop()
+            // setTimeout(loadUntilScrollable, 1000)
+            // loadMemoLoop()
             this.setState({
                 initialLoaded: true
             })

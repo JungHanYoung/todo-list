@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
     } catch (err) {
         if (err instanceof jwt.TokenExpiredError) {
             console.log('로그인 토큰이 만료')
-            return res.json(403, '로그인 토큰이 만료되었습니다.')
+            return res.status(403).json('로그인 토큰이 만료되었습니다.')
         }
     }
 
@@ -48,6 +48,8 @@ router.post('/', (req, res) => {
 
     newMemo.save(err => {
         if (err) throw err;
+        req.io.sockets.emit('created', newMemo)
+
         return res.json({
             success: true
         })
