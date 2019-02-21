@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx'
+import { observable, action, runInAction } from 'mobx'
 import client from '../axiosClient'
 
 
@@ -29,23 +29,32 @@ class AccountStore {
                 this.currentUser = username
                 localStorage.setItem('token', data.token)
             }))
-            .catch(action(response => {
-                this.login.status = 'FAILURE'
-            }))
+            .catch(response => {
+                runInAction(() => {
+                    this.login.status = 'FAILURE'
+                })
+                return response
+            })
     }
 
     register = (username, password) => {
         this.setRegisterStatus('WAITING')
-        console.log('aaaa')
         return client.post('/api/account/signup', { username, password })
             .then(response => response.data)
-            .then(action(data => {
-                this.register.status = 'SUCCESS'
-                this.register.error = ''
-            }))
-            .catch(action(response => {
-                this.register.status = 'FAILURE'
-            }))
+            .then(data => {
+                console.log('resolved')
+                runInAction(() => {
+                    this.register.status = 'SUCCESS'
+                    this.register.error = ''
+                })
+                return data
+            })
+            .catch(err => {
+                runInAction(() => {
+                    this.register.status = 'FAILURE'
+                })
+                throw new Error(err.response.data.error)
+            })
     }
 
     getInfo = () => {

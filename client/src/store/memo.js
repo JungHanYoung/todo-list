@@ -117,19 +117,16 @@ class MemoStore {
     }
 
     loadSocket = () => {
-        this.socket.on('init', (hello) => {
-            console.log('client socket connected', hello)
-        })
 
         this.socket.on('created', (memo) => {
-            console.log('created:', memo)
+            // console.log('created:', memo)
             runInAction(() => {
                 this.memos.unshift(memo)
             })
         })
 
         this.socket.on('edit', (memo) => {
-            console.log('edited:', memo)
+            // console.log('edited:', memo)
             const index = this.memos.findIndex(el => el._id === memo._id)
             runInAction(() => {
                 this.memos[index] = memo

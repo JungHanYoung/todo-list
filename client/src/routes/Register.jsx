@@ -17,10 +17,36 @@ class Register extends Component {
         })
     }
 
-    render() {
+    handleRegister = () => {
+        const {
+            username,
+            password
+        } = this.state
 
-        const { register } = this.props.account
-        const { username, password } = this.state
+        let usernameRegex = /^[a-z0-9]+$/
+
+        if (!usernameRegex.test(username)) {
+            window.Materialize.toast('Invalid username..', 2000)
+            return
+        }
+
+        this.props.account.register(username, password)
+            .then(response => {
+
+                this.props.history.push('/login')
+                window.Materialize.toast('create user!', 2000)
+            })
+            .catch(err => {
+
+                this.setState({
+                    password: ''
+                })
+                window.Materialize.toast(err, 2000)
+            })
+
+    }
+
+    render() {
 
         return (
             <div className="container auth">
@@ -57,7 +83,7 @@ class Register extends Component {
                                 />
                             </div>
                             <span className="waves-effect waves-light btn"
-                                onClick={() => register(username, password)}>CREATE</span>
+                                onClick={this.handleRegister}>CREATE</span>
                         </div>
                     </div>
                 </div>

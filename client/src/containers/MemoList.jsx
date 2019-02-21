@@ -22,6 +22,7 @@ class MemoList extends Component {
             <div className="wrapper">
                 {memos.map(memo => (
                     <Memo
+                        key={`memo-item-${memo._id}`}
                         data={memo}
                         ownership={memo.writer === currentUser}
                     />

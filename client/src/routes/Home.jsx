@@ -115,7 +115,7 @@ class Home extends React.Component {
                 {isLoggedIn && <Write error={error} onPost={memoPostRequest} />}
                 <MemoList />
                 <SyncLoader
-                    css={css`
+                    className={css`
                         display: block;
                         position: fixed;
                         bottom: 10px;
