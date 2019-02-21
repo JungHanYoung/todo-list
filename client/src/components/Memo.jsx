@@ -8,35 +8,8 @@ import DropDownMenu from './memo/DropDownMenu'
 import EditView from './memo/EditView'
 
 const Memo = ({ data, ownership = false }) => {
-    let starStyle = { color: '#FF9980' }
-    //(this.props.data.starred.indexOf(this.props.currentUser) > -1)
-    // true ?  : {};
 
     const [editMode, setEditMode] = useState(false)
-
-    // const EditView = ({
-    //     toggleEdit = () => { },
-    //     contents
-    // }) => {
-    //     const [value, setValue] = useState(contents)
-
-    //     return (
-    //         <div className="write">
-    //             <div className="card">
-    //                 <div className="card-content">
-    //                     <textarea
-    //                         className="materialize-textarea"
-    //                         placeholder="Edit your memo"
-    //                         value={value}
-    //                         onChange={(e) => setValue(e.target.value)}></textarea>
-    //                 </div>
-    //                 <div className="card-action">
-    //                     <span onClick={() => toggleEdit(value)}>OK</span>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
 
     return (
         <div className="container memo">
@@ -69,7 +42,7 @@ const Memo = ({ data, ownership = false }) => {
                 </div>
                 <div className="footer">
                     <i className="material-icons log-footer-icon star icon-button"
-                        style={starStyle}
+                        style={{ color: '#FF9980' }}
                     // onClick={this.handleStar}
                     >star</i>
                     <span className="star-count">{data.starred.length}</span>

@@ -1,4 +1,5 @@
 const express = require('express')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const router = express.Router()
@@ -46,10 +47,10 @@ router.post('/signup', (req, res) => {
             password
         })
 
-        account.password = account.generateHash(account.password)
+        newAccount.password = bcrypt.hashSync(password, 8)
 
         // SAVE
-        account.save(err => {
+        newAccount.save(err => {
             if (err) throw err
             return res.json({
                 success: true
@@ -81,17 +82,14 @@ router.post('/signin', (req, res) => {
             })
         }
 
-        if (!account.validateHash(password)) {
+        const validPassword = bcrypt.compareSync(password, account.password)
+
+        if (!validPassword) {
             return res.status(401).json({
                 error: "LOGIN FAILED",
                 code: 1
             })
         }
-
-        // req.session.loginInfo = {
-        //     _id: account._id,
-        //     username: account.username
-        // }
 
         const token = jwt.sign({
             _id: account._id,
