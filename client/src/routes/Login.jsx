@@ -12,9 +12,9 @@ class Login extends React.Component {
     }
     handleLogin = () => {
         const { username, password } = this.state
-        console.log(this.props.account)
-        console.log('username', username)
-        console.log('password', password)
+        // console.log(this.props.account)
+        // console.log('username', username)
+        // console.log('password', password)
         this.props.account.login(username, password).then(() => {
             // console.log('try to login')
             // console.log(this.props.account.login.status)

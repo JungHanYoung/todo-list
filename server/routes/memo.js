@@ -128,12 +128,26 @@ router.put('/:id', (req, res) => {
         })
     }
 
-    if (typeof req.session.loginInfo === 'undefined') {
-        return res.status(403).json({
-            error: "NOT LOGGED IN",
-            code: 3
-        })
+    const token = req.body.token
+
+    let validToken = null;
+
+    try {
+        validToken = jwt.verify(token, 'hello')
+        console.log(validToken)
+    } catch (err) {
+        if (err instanceof jwt.TokenExpiredError) {
+            console.log('로그인 토큰이 만료')
+            return res.status(403).json('로그인 토큰이 만료되었습니다.')
+        }
     }
+
+    // if (typeof req.session.loginInfo === 'undefined') {
+    //     return res.status(403).json({
+    //         error: "NOT LOGGED IN",
+    //         code: 3
+    //     })
+    // }
 
     Memo.findById(req.params.id, (err, memo) => {
         if (err) throw err;
@@ -146,7 +160,7 @@ router.put('/:id', (req, res) => {
         }
 
         // check writer
-        if (memo.writer !== req.session.loginInfo.username) {
+        if (memo.writer !== validToken.username) {
             return res.status(403).json({
                 error: "PERMISSION DENIED",
                 code: 5
@@ -159,6 +173,8 @@ router.put('/:id', (req, res) => {
 
         memo.save((err, memo) => {
             if (err) throw err;
+
+            req.io.sockets.emit('edit', memo)
             return res.json({
                 success: true,
                 memo

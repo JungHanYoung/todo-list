@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 // Sub Component
 import DropDownMenu from './memo/DropDownMenu'
+import EditView from './memo/EditView'
 
 const Memo = ({ data, ownership = false }) => {
     let starStyle = { color: '#FF9980' }
@@ -13,47 +14,57 @@ const Memo = ({ data, ownership = false }) => {
 
     const [editMode, setEditMode] = useState(false)
 
-    const EditView = ({
-        toggleEdit = () => { },
-        contents
-    }) => {
-        const [value, setValue] = useState(contents)
+    // const EditView = ({
+    //     toggleEdit = () => { },
+    //     contents
+    // }) => {
+    //     const [value, setValue] = useState(contents)
 
-        return (
-            <div className="write">
-                <div className="card">
-                    <div className="card-content">
-                        <textarea
-                            className="materialize-textarea"
-                            placeholder="Edit your memo"
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}></textarea>
-                    </div>
-                    <div className="card-action">
-                        <span onClick={() => toggleEdit(value)}>OK</span>
-                    </div>
-                </div>
-            </div>
-        )
-    }
+    //     return (
+    //         <div className="write">
+    //             <div className="card">
+    //                 <div className="card-content">
+    //                     <textarea
+    //                         className="materialize-textarea"
+    //                         placeholder="Edit your memo"
+    //                         value={value}
+    //                         onChange={(e) => setValue(e.target.value)}></textarea>
+    //                 </div>
+    //                 <div className="card-action">
+    //                     <span onClick={() => toggleEdit(value)}>OK</span>
+    //                 </div>
+    //             </div>
+    //         </div>
+    //     )
+    // }
 
     return (
         <div className="container memo">
             <div className="card">
                 <div className="info">
-                    <Link to={`/wall?username=${data.writer}`} className="username">{data.writer}</Link> wrote a log . <TimeAgo date={data.date.created} />
-                    {/* { data.is_edited && editedInfo } */}
-                    {ownership
+                    {/* {data.is_edited && <span style={{ color: '#AAB5BC' }}> . Edited <TimeAgo date={data.date.edited} live /></span>} */}
+                    <Link to={`/wall?username=${data.writer}`} className="username">
+                        {data.writer}
+                    </Link>
+                    {data.is_edited ?
+                        <span style={{ color: '#AAB5BC' }}> edited . <TimeAgo date={data.date.edited} live /></span>
+                        :
+                        <> wrote . <TimeAgo date={data.date.created} /></>}
+                    {/* wrote a log . <TimeAgo date={data.date.created} />
+                    { data.is_edited && editedInfo } */}
+                    {ownership && !editMode
                         && <DropDownMenu
                             _id={data._id}
-                            setEditMode={() => setEditMode(!editMode)}
+                            setEditMode={() => setEditMode(true)}
                         />}
                 </div>
                 <div className="card-content">
+
                     {editMode
                         ? <EditView
+                            id={data._id}
                             contents={data.contents}
-                        // toggleEdit={}
+                            toggleEdit={() => setEditMode(false)}
                         /> : data.contents}
                 </div>
                 <div className="footer">

@@ -1,5 +1,6 @@
 import { observable, action, runInAction } from 'mobx'
 import client from '../axiosClient'
+import io from 'socket.io-client'
 
 
 class MemoStore {
@@ -9,6 +10,7 @@ class MemoStore {
     @observable isLast = false
     @observable username = ''
     @observable isInitial = true
+    socket = io('http://localhost:4000')
 
 
     memoListRequest = (listType, id) => {
@@ -32,11 +34,14 @@ class MemoStore {
                     if (listType === 'new') {
                         this.memos.unshift(...data)
                     } else {
+                        if (data.length === 0) {
+                            this.isLast = true
+                        }
                         this.memos.push(...data)
                     }
                 }
                 this.fetchSuccess()
-                // this.memos = data
+
             }))
             .catch(this.fetchFailure)
     }
@@ -52,7 +57,9 @@ class MemoStore {
 
         return this.memoListRequest('old', lastId)
             .then(() => {
+
                 if (this.isLast) {
+                    console.log('is last memo!!!')
                     window.Materialize.toast('You are reading the last page', 2000);
                 }
             })
@@ -89,6 +96,47 @@ class MemoStore {
             })
     }
 
+    memoEditRequest = (id, contents) => {
+        this.status = 'WAITING'
+        let url = '/api/memo'
+        return client.put(`${url}/${id}`, { contents, token: localStorage.getItem('token') })
+            .then(action(response => {
+                const { memo } = response.data
+                const index = this.memos.findIndex(el => el._id === memo._id)
+                this.memos[index] = memo
+                this.status = 'SUCCESS'
+            }))
+            .catch(err => {
+                console.log(err.response)
+
+                runInAction(() => {
+                    this.status = 'FAILURE'
+                    this.error = err.response.data.error
+                })
+            })
+    }
+
+    loadSocket = () => {
+        this.socket.on('init', (hello) => {
+            console.log('client socket connected', hello)
+        })
+
+        this.socket.on('created', (memo) => {
+            console.log('created:', memo)
+            runInAction(() => {
+                this.memos.unshift(memo)
+            })
+        })
+
+        this.socket.on('edit', (memo) => {
+            console.log('edited:', memo)
+            const index = this.memos.findIndex(el => el._id === memo._id)
+            runInAction(() => {
+                this.memos[index] = memo
+            })
+        })
+    }
+
     @action
     socketConnectedNewMemo(memo) {
         this.memos.unshift(memo)
@@ -101,7 +149,9 @@ class MemoStore {
 
     @action.bound
     fetchSuccess() {
+
         this.status = 'SUCCESS'
+
     }
     @action.bound
     fetchFailure(data) {
