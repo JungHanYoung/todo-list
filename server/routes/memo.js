@@ -70,7 +70,7 @@ router.get('/', (req, res) => {
         })
 })
 
-router.delete('/:id', (req, res) => {
+router.post('/delete/:id', (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
         return res.status(400).json({
@@ -79,9 +79,22 @@ router.delete('/:id', (req, res) => {
         })
     }
 
-    if (typeof req.session.loginInfo === 'undefined') {
+    const token = req.body.token
+    let validToken = null;
+
+    try {
+        validToken = jwt.verify(token, 'hello')
+        console.log(validToken)
+    } catch (err) {
+        if (err instanceof jwt.TokenExpiredError) {
+            console.log('로그인 토큰이 만료')
+            return res.status(403).json('로그인 토큰이 만료되었습니다.')
+        }
+    }
+
+    if (typeof validToken._id === 'undefined' || typeof validToken.username === 'undefined') {
         return res.status(403).json({
-            error: "NOT LOGGED IN",
+            error: "검증된 데이터가 아닙니다.",
             code: 2
         })
     }
@@ -96,14 +109,14 @@ router.delete('/:id', (req, res) => {
             })
         }
 
-        if (memo.writer !== req.session.loginInfo.username) {
+        if (memo.writer !== validToken.username) {
             return res.status(403).json({
                 error: "PERMISSION FAILED",
                 code: 4
             })
         }
 
-        Memo.remove({ _id: req.params.id }, (err) => {
+        Memo.deleteOne({ _id: req.params.id }, (err) => {
             if (err) throw err
             return res.json({
                 success: true

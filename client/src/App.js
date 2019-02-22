@@ -14,7 +14,10 @@ class App extends Component {
 
   componentDidMount() {
 
-    this.props.account.getInfo()
+    this.props.account.getInfo().then(() => {
+      // console.log('aaa')
+      // this.componentDidUpdate()
+    })
 
   }
 

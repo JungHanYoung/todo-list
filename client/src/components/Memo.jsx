@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom'
 import DropDownMenu from './memo/DropDownMenu'
 import EditView from './memo/EditView'
 
-const Memo = ({ data, ownership = false }) => {
+const Memo = ({ data, ownership = false, onRemove }) => {
+
 
     const [editMode, setEditMode] = useState(false)
 
@@ -29,6 +30,7 @@ const Memo = ({ data, ownership = false }) => {
                         && <DropDownMenu
                             _id={data._id}
                             setEditMode={() => setEditMode(true)}
+                            onRemove={onRemove}
                         />}
                 </div>
                 <div className="card-content">
@@ -54,7 +56,8 @@ const Memo = ({ data, ownership = false }) => {
 
 Memo.propTypes = {
     data: PropTypes.object.isRequired,
-    ownership: PropTypes.bool.isRequired
+    ownership: PropTypes.bool.isRequired,
+    onRemove: PropTypes.func.isRequired
 }
 
 export default Memo

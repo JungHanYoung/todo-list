@@ -16,7 +16,7 @@ class MemoList extends Component {
     }
 
     render() {
-        const { memos } = this.props.memo
+        const { memos, memoRemoveRequest } = this.props.memo
         const { currentUser } = this.props.account
         return (
             <div className="wrapper">
@@ -25,6 +25,7 @@ class MemoList extends Component {
                         key={`memo-item-${memo._id}`}
                         data={memo}
                         ownership={memo.writer === currentUser}
+                        onRemove={memoRemoveRequest}
                     />
                 ))}
             </div>

@@ -51,8 +51,6 @@ class MemoStore {
             return Promise.resolve()
         }
 
-        console.log(this.memos)
-
         let lastId = this.memos[this.memos.length - 1]._id
 
         return this.memoListRequest('old', lastId)
@@ -114,6 +112,32 @@ class MemoStore {
                     this.error = err.response.data.error
                 })
             })
+    }
+
+    memoRemoveRequest = (id) => {
+        this.status = 'WAITING'
+        let url = `/api/memo/delete/${id}`
+
+        return client.post(url, {
+            token: localStorage.getItem('token')
+        }).then(response => response.data)
+            .then(data => {
+                runInAction(() => {
+                    if (data.success) {
+                        runInAction(() => {
+                            this.status = 'SUCCESS'
+                            const index = this.memos.findIndex(memo => memo._id === id)
+                            this.memos.splice(index, 1)
+                        })
+                    }
+                })
+            })
+            .catch(response => {
+                runInAction(() => {
+                    this.status = 'FAILURE'
+                })
+            })
+
     }
 
     loadSocket = () => {

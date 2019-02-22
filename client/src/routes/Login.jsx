@@ -1,6 +1,6 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 
 
 @inject('account')
@@ -44,54 +44,59 @@ class Login extends React.Component {
     }
 
     render() {
-        return (
-            <div className="container auth">
-                <Link className="logo" to="/">MEMOPAD</Link>
-                <div className="card">
-                    <div className="header blue white-text center">
-                        <div className="card-content">LOGIN</div>
-                    </div>
-                    <div>
-                        <div className="card-content">
-                            <div className="row">
-                                <div className="input-field col s12 username">
-                                    <label>Username</label>
-                                    <input
-                                        name="username"
-                                        type="text"
-                                        className="validate"
-                                        onChange={this.handleChange}
-                                        value={this.state.username}
-                                    />
-                                </div>
-                                <div className="input-field col s12">
-                                    <label>Password</label>
-                                    <input
-                                        name="password"
-                                        type="password"
-                                        className="validate"
-                                        onChange={this.handleChange}
-                                        value={this.state.password}
-                                        onKeyPress={this.handleKeypress}
-                                    />
-                                </div>
-                                <span
-                                    className="waves-effect waves-light btn"
-                                    onClick={this.handleLogin}>Login</span>
-                            </div>
+        if (this.props.account.isLoggedIn) {
+            // window.Materialize.toast('already Login', 2000)
+            return <Redirect to="/" />
+        } else {
+            return (
+                <div className="container auth">
+                    <Link className="logo" to="/">MEMOPAD</Link>
+                    <div className="card z-depth-5">
+                        <div className="header blue white-text center">
+                            <div className="card-content">LOGIN</div>
                         </div>
-                        <div className="footer">
+                        <div>
                             <div className="card-content">
-                                <div className="right">
-                                    New Here? <Link to="/register">Create an account</Link>
+                                <div className="row">
+                                    <div className="input-field col s12 username">
+                                        <label>Username</label>
+                                        <input
+                                            name="username"
+                                            type="text"
+                                            className="validate"
+                                            onChange={this.handleChange}
+                                            value={this.state.username}
+                                        />
+                                    </div>
+                                    <div className="input-field col s12">
+                                        <label>Password</label>
+                                        <input
+                                            name="password"
+                                            type="password"
+                                            className="validate"
+                                            onChange={this.handleChange}
+                                            value={this.state.password}
+                                            onKeyPress={this.handleKeypress}
+                                        />
+                                    </div>
+                                    <span
+                                        className="waves-effect waves-light btn"
+                                        onClick={this.handleLogin}>Login</span>
+                                </div>
+                            </div>
+                            <div className="footer">
+                                <div className="card-content">
+                                    <div className="right">
+                                        New Here? <Link to="/register">Create an account</Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-        )
+            )
+        }
     }
 }
 

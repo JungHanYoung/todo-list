@@ -58,12 +58,14 @@ class AccountStore {
     }
 
     getInfo = () => {
-        client.post('/api/account/info', { token: this.token })
+        return client.post('/api/account/info', { token: this.token })
             .then(response => response.data)
-            .then(action(data => {
-                this.isLoggedIn = true
-                this.currentUser = data.username
-            }))
+            .then(data => {
+                runInAction(() => {
+                    this.isLoggedIn = true
+                    this.currentUser = data.username
+                })
+            })
             .catch(action(data => {
                 this.isLoggedIn = false
                 this.currentUser = ''
